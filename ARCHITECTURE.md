@@ -75,3 +75,15 @@ Additional requirements that may not be implemented might include:
 - Regulatory Compliance (GDPR, CCPA, other data privacy laws)
 - Accessibility
 - Language Support
+
+## How it was started
+
+- `npm create vite@latest ClapBack -- --tempalte react-ts ./`
+- Files moved from `./ClapBack` to `./`
+- `npm install`
+- `npm run dev` to ensure vite and react were working
+- `npm install electron --save-dev`
+- created `./main.js`, `./preload.js`
+- modified `./vite.config.ts` to include `base: './',`
+- modified `package.json` to remove `type: module` and to add start script
+- `npm start`

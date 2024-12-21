@@ -87,3 +87,9 @@ Additional requirements that may not be implemented might include:
 - modified `./vite.config.ts` to include `base: './',`
 - modified `package.json` to remove `type: module` and to add start script
 - `npm start`
+
+- `npm install -D tailwindcss postcss autoprefixer`
+- `npm install @fortawesome/fontawesome-free`
+- `npx tailwindcss init -p`
+- modified `tailwind.config.js`
+- added `./src/tailwind.css`

@@ -35,7 +35,11 @@ Finally, compatibility with [coturn](https://github.com/coturn/coturn) will be a
 
 [React Native](https://reactnative.dev/) has been considered as an alternative to a cross-platform GUI solution for the application. [Blazor](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor) and [MAUI](https://dotnet.microsoft.com/en-us/apps/maui) are also tempting solutions for this project.
 
-[JsSIP](https://jssip.net/) and native [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) have been considered for this project also. However due to these solutions requireing a central server, I felt as though these solutions did not meet the **Direct IP-to-IP messaging** requirement.
+[Tauri](https://v2.tauri.app/) has been considered, and is an attractive option due to it directly using the OS web engine resulting in smaller package size, better security, and better performance. However, with this introducing Rust lang to the project, which I have little experience in, and with it not being as mature, introducing this into the project could put the tight timeline in jeopardy.
+
+[Wails.io](https://wails.io/) is a strong candidate. What Tauri is for Rust, Wails.io is for Go. I still don't have as much experience with GO as I do JS/TS, but with what little I've done with go I have found to be delightful and very intuitive. Still Wails.io is not as mature as Electron and while I would _really_ like to try using Wails.io for this project, Electron might end up being the best selection for this project due to the tight deadline. I might revisit this decision to implement using Wails.io in the future.
+
+[JsSIP](https://jssip.net/) and native [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API) have been considered for this project also. However due to these solutions requiring a central server, I felt as though these solutions did not meet the **Direct IP-to-IP messaging** requirement.
 
 ## Assumptions
 

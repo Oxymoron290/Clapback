@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useChatContext } from '../../context/ChatContext';
 import MessageItem from './MessageItem';
 
 const MessageList: React.FC = () => {
   const { chats, selectedChatId } = useChatContext();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  if (!selectedChatId) {
-    return <div className="flex-1 p-4">Select a contact to start chatting</div>;
-  }
+  const messages = selectedChatId ? chats[selectedChatId] || [] : [];
 
-  const messages = chats[selectedChatId] || [];
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   return (
     <div className="flex-1 p-4 overflow-y-auto">
@@ -20,6 +21,7 @@ const MessageList: React.FC = () => {
           isSentByUser={message.isSentByUser}
         />
       ))}
+      <div ref={messagesEndRef} />
     </div>
   );
 };

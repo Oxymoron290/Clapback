@@ -14,12 +14,13 @@ const ContactItem: React.FC<ContactItemProps> = ({ id, name, onClick }) => {
 
   return (
     <div
-      className={`p-2 cursor-pointer rounded-lg transition ${
-          isSelected ? 'bg-blue-500 text-white' : 'hover:bg-gray-200'
-      }`}
+      className={`p-2 cursor-pointer rounded-lg transition ${isSelected
+          ? 'bg-blue-500 text-white'
+          : 'hover:bg-gray-300 dark:hover:bg-gray-700 dark:text-white'
+        }`}
       onClick={onClick}
     >
-        {name}
+      {name}
     </div>
   );
 };

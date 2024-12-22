@@ -93,3 +93,5 @@ Additional requirements that may not be implemented might include:
 - `npx tailwindcss init -p`
 - modified `tailwind.config.js`
 - added `./src/tailwind.css`
+
+- removed default style sheet, and reworked components to wire up tailwind

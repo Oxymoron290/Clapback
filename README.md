@@ -1,4 +1,4 @@
-# Clapback
+# 👏 Clapback 👏
 
 Clapback is a modern, open-source, peer-to-peer chat app designed for secure, real-time communication with a polished, user-friendly interface.
 

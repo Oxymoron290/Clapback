@@ -1,12 +1,14 @@
 import React, { useEffect, useRef } from 'react';
+import { useContactContext } from '../../context/ContactContext';
 import { useChatContext } from '../../context/ChatContext';
 import MessageItem from './MessageItem';
 
 const MessageList: React.FC = () => {
-  const { chats, selectedChatId } = useChatContext();
+  const { selectedChatId } = useContactContext();
+  const { chats } = useChatContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const messages = selectedChatId ? chats[selectedChatId] || [] : [];
+  const messages = selectedChatId ? chats[selectedChatId]?.messages || [] : [];
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

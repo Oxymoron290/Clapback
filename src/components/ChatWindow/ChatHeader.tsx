@@ -1,9 +1,9 @@
 import React from 'react';
-import { useChatContext } from '../../context/ChatContext';
+import { useContactContext } from '../../context/ContactContext';
 import { useThemeContext } from '../../context/ThemeContext';
 
 const ChatHeader: React.FC = () => {
-  const { contacts, selectedChatId } = useChatContext();
+  const { contacts, selectedChatId } = useContactContext();
   const { darkMode, toggleDarkMode } = useThemeContext();
 
   const selectedContact = contacts.find(contact => contact.id === selectedChatId);

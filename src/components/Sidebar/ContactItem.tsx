@@ -1,5 +1,5 @@
 import React from 'react';
-import { useChatContext } from '../../context/ChatContext';
+import { useContactContext } from '../../context/ContactContext';
 
 interface ContactItemProps {
   id: number;
@@ -8,7 +8,7 @@ interface ContactItemProps {
 }
 
 const ContactItem: React.FC<ContactItemProps> = ({ id, name, onClick }) => {
-  const { selectedChatId } = useChatContext();
+  const { selectedChatId } = useContactContext();
 
   const isSelected = selectedChatId === id;
 

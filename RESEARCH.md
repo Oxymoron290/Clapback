@@ -43,5 +43,9 @@
 - [SCTP wiki](https://en.wikipedia.org/wiki/Stream_Control_Transmission_Protocol)
 	- [RFC 3286 - An Introduction to the Stream Control Transmission Protocol (SCTP)](https://datatracker.ietf.org/doc/html/rfc3286)
 	- [RFC 9260 - Stream Control Transmission Protocol](https://datatracker.ietf.org/doc/html/rfc9260)
+- [Matrix](https://matrix.org/)
+  - [Matrix Wiki](https://en.wikipedia.org/wiki/Matrix_(protocol))
+- XMPP
+- IRC
 - [DTLS Wiki](https://en.wikipedia.org/wiki/Datagram_Transport_Layer_Security)
 - [coturn TURN server](https://github.com/coturn/coturn)

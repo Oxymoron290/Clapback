@@ -6,20 +6,49 @@ interface RoomContextType {
   rooms: Room[];
   selectedRoomId: string | null;
   setSelectedRoomId: (id: string) => void;
+  roomMessages: Record<string, { id: string; text: string; isSentByUser: boolean }[]>;
   searchResults: { user_id: string; display_name?: string | undefined; avatar_url?: string | undefined; }[];
   fetchRooms: () => void;
   searchUsers: (term: string) => Promise<void>;
   startChat: (userId: string) => Promise<void>;
+  loadRoomMessages: (roomId: string) => Promise<void>;
   leaveRoom: (roomId: string) => Promise<void>;
+  sendMessage: (roomId: string, messageText: string) => Promise<void>;
 }
 
 const RoomContext = createContext<RoomContextType | undefined>(undefined);
 
 export const RoomProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { matrixClient } = useAuthContext();
+  const { matrixClient, sessionReady } = useAuthContext();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [searchResults, setSearchResults] = useState<{ user_id: string; display_name?: string | undefined; avatar_url?: string | undefined; }[]>([]);
-  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
+  const [selectedRoomId, ssrid] = useState<string | null>(null);
+  const [roomMessages, setRoomMessages] = useState<Record<string, { id: string; text: string; isSentByUser: boolean }[]>>({});
+
+  const setSelectedRoomId = async (id: string) => {
+    if (!matrixClient) return;
+  
+    const room = matrixClient.getRoom(id);
+    if (!room) {
+      console.error(`Room with ID ${id} not found.`);
+      return;
+    }
+  
+    if (room.getMyMembership() === 'invite') {
+      try {
+        console.log(`Joining room ${id}...`);
+        await matrixClient.joinRoom(id);
+        console.log(`Successfully joined room ${id}`);
+      } catch (err) {
+        console.error(`Failed to join room ${id}:`, err);
+        return;
+      }
+    }
+
+    setRoomMessages({});
+    ssrid(id);
+    loadRoomMessages(id);
+  };
 
   // Fetch list of visible rooms
   const fetchRooms = () => {
@@ -72,6 +101,7 @@ export const RoomProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const leaveRoom = async (roomId: string) => {
     if (!matrixClient) return;
+    setRoomMessages({});
   
     try {
       await matrixClient.leave(roomId);
@@ -84,12 +114,91 @@ export const RoomProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const sendMessage = async (roomId: string, messageText: string) => {
+    if (!matrixClient) return;
+  
+    try {
+      // @ts-ignore
+      await matrixClient.sendEvent(roomId, 'm.room.message', {
+        msgtype: 'm.text',
+        body: messageText,
+      });
+      console.log(`Message sent to room ${roomId}: ${messageText}`);
+    } catch (err) {
+      console.error(`Failed to send message to room ${roomId}:`, err);
+    }
+  };
+
+  const loadRoomMessages = async (roomId: string) => {
+    if (!matrixClient) return;
+    const roomData = await matrixClient?.roomInitialSync(roomId, 50);
+    console.log(roomData);
+    const historicalMessages = roomData?.messages?.chunk
+      .filter((event) => event.type === 'm.room.message')
+      .map((event) => ({
+        id: event.event_id || '',
+        text: event.content.body || '',
+        isSentByUser: event.sender === matrixClient.getUserId(),
+      }));
+      
+    // @ts-ignore
+    setRoomMessages((prevMessages) => ({
+      ...prevMessages,
+      [roomId]: historicalMessages,
+    }));
+  };
+  
+
   useEffect(() => {
-    fetchRooms();
+    if (sessionReady) {
+      setRoomMessages({});
+      fetchRooms();
+    }
+  }, [sessionReady]);
+  
+  useEffect(() => {
+    if (!matrixClient) return;
+
+    const handleTimelineEvent = (event: any, room: Room) => {
+      if (event.getType() === 'm.room.message') {
+        const content = event.getContent();
+        const message = {
+          id: event.getId(),
+          text: content.body,
+          isSentByUser: event.getSender() === matrixClient.getUserId(),
+        };
+
+        setRoomMessages((prevMessages) => ({
+          ...prevMessages,
+          [room.roomId]: [...(prevMessages[room.roomId] || []), message],
+        }));
+      }
+    };
+
+    // @ts-ignore
+    matrixClient.on('Room.timeline', handleTimelineEvent);
+
+    return () => {
+      // @ts-ignore
+      matrixClient.removeListener('Room.timeline', handleTimelineEvent);
+    };
   }, [matrixClient]);
 
+
   return (
-    <RoomContext.Provider value={{ rooms, searchResults, selectedRoomId, setSelectedRoomId, fetchRooms, searchUsers, startChat, leaveRoom }}>
+    <RoomContext.Provider value={{
+      rooms,
+      searchResults,
+      selectedRoomId,
+      setSelectedRoomId,
+      roomMessages,
+      fetchRooms,
+      searchUsers,
+      startChat,
+      loadRoomMessages,
+      leaveRoom,
+      sendMessage
+    }}>
       {children}
     </RoomContext.Provider>
   );

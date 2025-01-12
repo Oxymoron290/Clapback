@@ -4,6 +4,7 @@ import { createClient, MatrixClient, RegisterRequest } from 'matrix-js-sdk';
 interface AuthContextType {
   matrixClient: MatrixClient | null;
   isAuthenticated: boolean;
+  sessionReady: boolean;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -16,18 +17,40 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [matrixClient, setMatrixClient] = useState<MatrixClient | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
 
-  // Function to handle login
   const login = async (username: string, password: string) => {
     const client = createClient({ baseUrl: MATRIX_BASE_URL });
 
     await client.loginWithPassword(username, password);
+    await setLoggedIn(client);
+  };
+
+  const logout = () => {
+    setMatrixClient(null);
+    setIsAuthenticated(false);
+    setSessionReady(false);
+    localStorage.removeItem('matrix_access_token');
+    localStorage.removeItem('matrix_user_id');
+    localStorage.removeItem('matrix_registration_session');
+    localStorage.removeItem('matrix_email_sid');
+    matrixClient?.logout();
+  };
+
+  const setLoggedIn = async (client: MatrixClient) => {
+    console.log("Setting logged in: ", client.getUserId());
     setMatrixClient(client);
-    setIsAuthenticated(true);
 
     localStorage.setItem('matrix_access_token', client.getAccessToken() || '');
     localStorage.setItem('matrix_user_id', client.getUserId() || '');
-  };
+    localStorage.removeItem('matrix_registration_session');
+    localStorage.removeItem('matrix_email_sid');
+
+    client.startClient().then(() => {
+      setSessionReady(true);
+    });
+    setIsAuthenticated(true);
+  }
 
   // Function to handle registration
   const register = async (username: string, email: string, password: string) => {
@@ -72,18 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       //   "device_id": "NUJHFDSOWG"
       // }
       console.log(response);
-      
-      localStorage.removeItem('matrix_registration_session');
-      localStorage.removeItem('matrix_email_sid');
-      localStorage.setItem('matrix_access_token', client.getAccessToken() || '');
-      localStorage.setItem('matrix_user_id', client.getUserId() || '');
-      console.log(client.getAccessToken());
-      console.log(client.getUserId());
-      setMatrixClient(client);
-      setIsAuthenticated(true);
-      
-    localStorage.setItem('matrix_access_token', client.getAccessToken() || '');
-    localStorage.setItem('matrix_user_id', client.getUserId() || '');
+      setLoggedIn(client);
       return;
     }
 
@@ -142,15 +154,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // }
   };
 
-
-  // Function to handle logout
-  const logout = () => {
-    setMatrixClient(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('matrix_access_token');
-    localStorage.removeItem('matrix_user_id');
-  };
-
   useEffect(() => {
     const accessToken = localStorage.getItem('matrix_access_token');
     const userId = localStorage.getItem('matrix_user_id');
@@ -161,15 +164,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         accessToken,
         userId,
       });
-
-      setMatrixClient(client);
-      setIsAuthenticated(true);
-      client.startClient();
+      // client.loginWithToken(accessToken).then(() => {
+        setLoggedIn(client);
+      // });
     }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ matrixClient, isAuthenticated, login, register, logout }}>
+    <AuthContext.Provider value={{ matrixClient, isAuthenticated, sessionReady, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );

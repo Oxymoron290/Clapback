@@ -20,6 +20,7 @@ const createWindow = () => {
 
   // Open DevTools in development mode
   if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
     mainWindow.webContents.on('before-input-event', (event, input) => {
       if (input.key === 'F12' && input.type === 'keyDown') {
         if (mainWindow.webContents.isDevToolsOpened()) {

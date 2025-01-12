@@ -1,18 +1,17 @@
 import React from 'react';
-import { useContactContext } from '../../context/ContactContext';
+import { useRoomContext } from '../../context/RoomContext';
 import { useThemeContext } from '../../context/ThemeContext';
 
 const ChatHeader: React.FC = () => {
-  const { contacts, selectedChatId } = useContactContext();
+  const { rooms, selectedRoomId } = useRoomContext();
   const { darkMode, toggleDarkMode } = useThemeContext();
-
-  const selectedContact = contacts.find(contact => contact.id === selectedChatId);
+  const room = rooms.find((r) => r.roomId === selectedRoomId);
 
   return (
     <div className="p-4 bg-gray-200 dark:bg-gray-800 border-b dark:border-gray-700 flex justify-between items-center">
-        {selectedContact ? (
+        {room ? (
             <h1 className="text-lg font-bold dark:text-white">
-                Chat with {selectedContact.name}
+                Chat with {room.name || room.roomId}
             </h1>
         ) : (
             <h1 className="text-lg font-bold dark:text-white">No Chat Selected</h1>

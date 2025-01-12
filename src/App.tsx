@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { AuthProvider, useAuthContext } from './context/AuthContext';
 import { ChatProvider } from './context/ChatContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { ContactProvider } from './context/ContactContext';
+import { RoomProvider } from './context/RoomContext';
+import { ModalProvider } from './context/ModalContext';
+import Modal from './components/Modals/BasicModal';
 import AppLayout from './components/AppLayout';
 import SignIn from './components/Authentication/SignIn';
 import SignUp from './components/Authentication/SignUp';
@@ -19,11 +21,7 @@ const AppContent: React.FC = () => {
 
   if (isAuthenticated) {
     return (
-      <ContactProvider>
-        <ChatProvider>
-          <AppLayout />
-        </ChatProvider>
-      </ContactProvider>
+      <AppLayout />
     );
   }
 
@@ -38,7 +36,14 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <AppContent />
+        <ChatProvider>
+          <RoomProvider>
+            <ModalProvider>
+              <AppContent />
+              <Modal />
+            </ModalProvider>
+          </RoomProvider>
+        </ChatProvider>
       </AuthProvider>
     </ThemeProvider>
   );

@@ -23,7 +23,7 @@ const RoomList: React.FC = () => {
         />
       ))}
       <div
-        className={`p-2 cursor-pointer rounded-lg transition 'hover:bg-gray-300 dark:hover:bg-gray-700 dark:text-white bottom-0 fixed'`}
+        className={`p-2 cursor-pointer rounded-lg transition hover:bg-gray-300 dark:hover:bg-gray-700 dark:text-white bottom-0 fixed`}
         onClick={newChat}
       >
         New Chat <i className="fas fa-plus ml-2"></i>

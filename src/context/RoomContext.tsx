@@ -140,15 +140,14 @@ export const RoomProvider: React.FC<{ children: React.ReactNode }> = ({ children
         text: event.content.body || '',
         isSentByUser: event.sender === matrixClient.getUserId(),
       }));
-      
+    console.log(historicalMessages);
+
     // @ts-ignore
     setRoomMessages((prevMessages) => ({
-      ...prevMessages,
       [roomId]: historicalMessages,
     }));
   };
   
-
   useEffect(() => {
     if (sessionReady) {
       setRoomMessages({});
@@ -159,6 +158,7 @@ export const RoomProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (!matrixClient) return;
 
+    fetchRooms();
     const handleTimelineEvent = (event: any, room: Room) => {
       if (event.getType() === 'm.room.message') {
         const content = event.getContent();
@@ -183,7 +183,6 @@ export const RoomProvider: React.FC<{ children: React.ReactNode }> = ({ children
       matrixClient.removeListener('Room.timeline', handleTimelineEvent);
     };
   }, [matrixClient]);
-
 
   return (
     <RoomContext.Provider value={{

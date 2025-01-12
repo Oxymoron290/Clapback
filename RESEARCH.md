@@ -47,5 +47,8 @@
   - [Matrix Wiki](https://en.wikipedia.org/wiki/Matrix_(protocol))
 - XMPP
 - IRC
+- [libP2P](https://libp2p.io/)
+  - [js-libp2p and webRTC](https://docs.libp2p.io/guides/getting-started/webrtc/)
+  - [gossipsub](https://docs.libp2p.io/concepts/pubsub/overview/)
 - [DTLS Wiki](https://en.wikipedia.org/wiki/Datagram_Transport_Layer_Security)
 - [coturn TURN server](https://github.com/coturn/coturn)

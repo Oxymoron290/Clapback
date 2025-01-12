@@ -1,21 +1,19 @@
 import React, { useState } from 'react';
-import { useContactContext } from '../../context/ContactContext';
-import { useChatContext } from '../../context/ChatContext';
+import { useRoomContext } from '../../context/RoomContext';
 
 const MessageInput: React.FC = () => {
   const [messageText, setMessageText] = useState('');
-  const { selectedChatId } = useContactContext();
-  const { sendMessage } = useChatContext();
+  const { selectedRoomId, sendMessage } = useRoomContext();
 
-  const handleSendMessage = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSendMessage = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (selectedChatId && messageText.trim()) {
-      sendMessage(selectedChatId, messageText);
+    if (selectedRoomId && messageText.trim()) {
+      await sendMessage(selectedRoomId, messageText);
       setMessageText('');
     }
   };
 
-  return selectedChatId && (
+  return selectedRoomId && (
     <div className="p-4 border-t dark:border-gray-700">
       <form onSubmit={handleSendMessage} className="flex">
         <input

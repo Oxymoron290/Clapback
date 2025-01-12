@@ -1,17 +1,50 @@
-import React from 'react';
-import AppLayout from './components/AppLayout';
+import React, { useEffect, useState } from 'react';
+import { AuthProvider, useAuthContext } from './context/AuthContext';
 import { ChatProvider } from './context/ChatContext';
 import { ThemeProvider } from './context/ThemeContext';
-import { ContactProvider } from './context/ContactContext';
+import { RoomProvider } from './context/RoomContext';
+import { ModalProvider } from './context/ModalContext';
+import Modal from './components/Modals/BasicModal';
+import AppLayout from './components/AppLayout';
+import SignIn from './components/Authentication/SignIn';
+import SignUp from './components/Authentication/SignUp';
+
+const AppContent: React.FC = () => {
+  const { isAuthenticated } = useAuthContext();
+  const [showSignUp, setShowSignUp] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      setShowSignUp(false);
+    }
+  }, [isAuthenticated]);
+
+  if (isAuthenticated) {
+    return (
+      <AppLayout />
+    );
+  }
+
+  return showSignUp ? (
+    <SignUp onSwitchToSignIn={() => setShowSignUp(false)} />
+  ) : (
+    <SignIn onSwitchToSignUp={() => setShowSignUp(true)} />
+  );
+};
 
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <ContactProvider>
+      <AuthProvider>
         <ChatProvider>
-          <AppLayout />
+          <RoomProvider>
+            <ModalProvider>
+              <AppContent />
+              <Modal />
+            </ModalProvider>
+          </RoomProvider>
         </ChatProvider>
-      </ContactProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 };

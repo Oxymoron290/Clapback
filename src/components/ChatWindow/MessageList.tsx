@@ -1,14 +1,17 @@
 import React, { useEffect, useRef } from 'react';
-import { useContactContext } from '../../context/ContactContext';
-import { useChatContext } from '../../context/ChatContext';
+import { useRoomContext } from '../../context/RoomContext';
 import MessageItem from './MessageItem';
 
 const MessageList: React.FC = () => {
-  const { selectedChatId } = useContactContext();
-  const { chats } = useChatContext();
+  const { selectedRoomId, roomMessages, loadRoomMessages } = useRoomContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const messages = selectedChatId ? chats[selectedChatId]?.messages || [] : [];
+  const messages = selectedRoomId ? roomMessages[selectedRoomId] || [] : [];
+
+  useEffect(() => {
+    if(selectedRoomId)
+      loadRoomMessages(selectedRoomId);
+  }, [selectedRoomId]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -16,7 +19,7 @@ const MessageList: React.FC = () => {
 
   return (
     <div className="flex-1 p-4 overflow-y-auto">
-      {messages.map(message => (
+      {messages.map((message) => (
         <MessageItem
           key={message.id}
           text={message.text}

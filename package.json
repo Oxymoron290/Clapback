@@ -3,7 +3,7 @@
   "author": "Oxymoron290",
   "description": "A modern, open-source, peer-to-peer chat app designed for secure, real-time communication with a polished, user-friendly interface.",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "main": "main.js",
   "scripts": {
     "start": "electron-forge start",

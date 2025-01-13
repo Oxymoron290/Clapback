@@ -17,7 +17,12 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
+      config: {
+        options: {
+          maintainer: 'Timothy Sturm <me@timothysturm.com>',
+          homepage: 'https://clapback.chat'
+        }
+      }
     },
     {
       name: '@electron-forge/maker-rpm',
